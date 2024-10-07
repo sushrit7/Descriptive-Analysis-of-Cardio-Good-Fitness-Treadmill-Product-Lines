@@ -4,28 +4,70 @@ author: "Sushrit Kafle, 800792522, sukafle@siue.edu"
 date: "2024-10-06"
 output: pdf_document
 ---
-# STAT560 Course Project Code
-The market research team is assigned the task to identify the profile of the typical customer for each treadmill product offered by Cardio Good Fitness. The market research team decides to investigate whether there are differences across the product lines with respect to customer characteristics. The
-team decides to collect data on individuals who purchased a treadmill at a Cardio Good Fitness retail store during the prior three months. The data are stored in the CardioGoodFitness.csv file. The team identifies the following customer variables to study: product purchased, TM195, TM498, or TM798;
-gender; age in years; education in years; relationship status, single or partnered; annual household income ($); average number of times the customer plans to use the treadmill each week; average number of miles the customer expects to walk/run each week; and self-rated fitness on an 1-to-5
-scale, where 1 is poor shape and 5 is excellent shape. Perform descriptive analytics to create a customer profile for each Cardio Good Fitness treadmill product line.
 
-Objective:
-In this project, you are expected to generate a set of insights and recommendations that will help the company in targeting new customers. You will explore insights from the data to improve treadmill recommendation based on the income, marital status or age, etc and boosting out sales with potential buyers of a specific category of the treadmill. 
-You will write a report summarize your findings with visualizations or outputs from R. You will need to prepare a report that is accessible to a broad audience. It will need to outline your
-motivation, analysis steps, findings, and conclusions. Do not include your R code in the report. Submit the R code you used in appendix or in a separate file.
+```{r}
+library(ggplot2)
+library(dplyr)
+data = read.csv("CardioGoodFitness.csv")
+glimpse(data)
+```
+```{r}
+colnames(data)
+```
 
-Some questions to be answered:
-Below is a list of some possible questions that you may try to explore using the data. You do
-not have to answer all those questions and you should certainly not limit yourself to the list of
-the questions.
+```{r}
+missing_data = colSums(is.na(data))
+print(missing_data)
+```
+```{r}
+summary(data)
+```
 • How many models does store have?
+```{r}
+models = unique(data$Product)
+print(models)
+length(models)
+```
 • Which is most sold Model?
+```{r}
+library(knitr)
+most_sold = data %>% count(Product)
+kable(most_sold, col.names = c("Product", "Sold"), caption = "Treadmill Model Sales")
+```
 • Are Male customers buying treadmill more than female customers?
+```{r, echo=TRUE}
+ggplot(data, aes(x = Gender)) +
+  geom_bar(fill = "Purple") +
+  labs(title = "Treadmill Purchases by Gender", x = "Gender", y = "Number of Customers") 
+```
 • What is the average Income, Age, Education of people buying treadmill?
+
+```{r}
+averages = data %>% summarize(Avg_Income = mean(Income), Avg_Age = mean(Age), Avg_Education = mean(Education))
+kable(averages, caption = "Averages of Treadmill Buyers")
+```
+
 • How many days and miles customer expect to run on treadmill?
+
+```{r}
+avg_usage_miles = data %>% summarize(Avg_Usage = mean(Usage), Avg_Miles = mean(Miles))
+kable(avg_usage_miles, caption = "Average Days and Miles Expected on Treadmill")
+```
+
 • What is the average self-rated fitness of customers buying treadmill?
+
+```{r}
+self_rate = data %>% summarise(Avg_Rating = mean(Fitness))
+kable (self_rate, caption = "Average self-rated fitness of customers buying treadmill")
+```
 • Are married customers buying Treadmill more than Single customers?
+
+
+```{r}
+ggplot(data, aes(x = MaritalStatus)) +
+  geom_bar(fill = "LightGreen", width = 0.3) +
+  labs(title = "Treadmill Purchases by Marital Status", x = "Maritial Status", y = "Number of Customers") 
+```
 • Is there any relation between Income and model?
 • Is there any relation between Age and model?
 • Is there any relation between self-rated fitness and model?

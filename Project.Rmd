@@ -104,20 +104,219 @@ An average usage would be 3 times a week with 103.19 miles.
 
 -> The average self-rate fitness is given as:
 
-```{r}
+```{r, echo=FALSE}
 self_rate = data %>% summarise(Avg_Rating = mean(Fitness))
 kable(self_rate, caption = "Average self-rated fitness of customers buying treadmill")
 ```
 
 • Are married customers buying Treadmill more than Single customers?
 
+```{r, echo=FALSE}
+ggplot(data, aes(x = MaritalStatus)) +
+  geom_bar(fill = "LightGreen", width = 0.3) +
+  labs(title = "Treadmill Purchases by Marital Status", x = "Maritial Status", y = "Number of Customers") 
+```
+
 • Is there any relation between Income and model?
+
+-> Forming hypothesis:
+  
+  Null: There is no relation between Income and Model of Treadmill.
+  
+  Alternate: There is relation between Income and Model of Treadmill.
+  
+  Performing ANOVA test:
+```{r, echo=FALSE}
+library(knitr)
+anova_result = aov(Income ~ Product, data = data)
+anova_summary = summary(anova_result)
+anova_df = as.data.frame(anova_summary[[1]])
+kable(anova_df, format = "markdown", caption = "ANOVA Table: Income ~ Product")
+```
+  
+  As, F-value is very high and p-value < 0.05(typical significant value); we reject the null hypothesis. Hence, there is relation between income and model of treadmill.
+  
+  We can observe the relation below:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, y = Income)) +
+  geom_boxplot() +
+  labs(title = "Income Distribution by Treadmill Model", x = "Treadmill Model", y = "Income") 
+```
+  TM798 is more popular among higher income while TM195 and TM498 are popular among low income.
+  
 • Is there any relation between Age and model?
+
+-> Forming hypothesis:
+
+  Null: No relation between Age and model
+  
+  Alternate: Relation between Age and model
+  
+  Performing ANOVA test:
+```{r, echo=FALSE}
+anova_age_model <- aov(Age ~ Product, data = data)
+anova_result <- summary(anova_age_model)
+kable(anova_result[[1]], caption = "ANOVA Table: Age vs Product")
+```
+  
+  As p-value > 0.05, we do not have enough evidence to reject the null hypothesis.
+  
+  We can the relation with box plot below:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, y = Age)) +
+  geom_boxplot() +
+  labs(title = "Age Distribution by Treadmill Model", x = "Treadmill Model", y = "Age") 
+```
+  
+  It can be observed that the medians for the different treadmill models are similar.
+
 • Is there any relation between self-rated fitness and model?
+
+-> Forming hypothesis;
+  Null: No relation between self-rated fitness and model.
+  Alternate: There is relation between self-rated fitness and model
+  
+  Performing Chi-Square Test for categorical variable:
+  
+```{r, echo=FALSE, warning=FALSE}
+table_fitness_model = table(data$Fitness, data$Product)
+chisq_test = chisq.test(table_fitness_model)
+chi_result_df = data.frame(Statistic = chisq_test$statistic, DF = chisq_test$parameter, P_value = chisq_test$p.value)
+kable(chi_result_df, caption = "Chi-Square Test Results: Fitness vs Product")
+```
+  For p-value close to 0, reject null hypothesis at 0.05 level. We have sufficient evidence to conclude self-rated fitness and model have a relation.
+  
+  Observing with plot:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, fill = factor(Fitness))) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribution of Fitness by Product", x = "Treadmill Model",y = "Count", fill = "Fitness Level")
+```
+  For the model TM195 and TM498, people with fitness level 3 are more attracted. 
+  However, the model TM798 is bought by more fitness enthusiasts with fitness level 5.
+  
 • Is there any relation between education and model?
+
+-> Forming Hypothesis:
+
+  Null: There is no relation between education and model
+  
+  Alternate: There is relation between education and model.
+  
+  Performing Test:
+
+```{r, echo=FALSE}
+anova_edu_model = aov(Education ~ Product, data = data)
+anova_result = summary(anova_edu_model)
+kable(anova_result[[1]], caption = "ANOVA Table: Education vs Product")
+```
+  
+  As the p-value is close to 0, we reject the null hypothesis and conclude that we have enough evidence to support the alternative hypothesis, which says that there is relation between the education level and model of the treadmill.
+  
+  We can further explore the relation with a plot:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, y = Education)) +
+  geom_boxplot() +
+  labs(title = "Education Distribution by Treadmill Model", x = "Treadmill Model", y = "Education") 
+```
+  
+  It can be observed that people with more years of eduaction choose TM798 model.
+  
 • Does gender have any effect on model customer buy?
+
+->Forming Hypothesis:
+  
+  Null Hypothesis: Gender doesn't have any effect on model customer buy.
+  
+  Alternate Hypothesis: Gender has effect on the model customer buy.
+  
+  Performing Test:
+  
+```{r, echo=FALSE}
+table_gender_model = table(data$Gender, data$Product)
+chi_square_gender_model = chisq.test(table_gender_model)
+chi_square_gender_df = data.frame(Statistic = chi_square_gender_model$statistic, DF = chi_square_gender_model$parameter, P_value = chi_square_gender_model$p.value)
+kable(chi_square_gender_df, caption = "Chi-Square Test: Gender vs Treadmill Model")
+```
+  
+  As the p-value is close to 0, we reject the null hypothesis and conclude that we have enough evidence to support the alternative hypothesis, which says that there is relation between the gender and model of the treadmill.
+  
+  Visualizing the relation:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, fill = Gender)) +
+  geom_bar(position = "fill") +
+  labs(title = "Distribution of Gender by Treadmill Model", y = "Proportion", x = "Treadmill Model") 
+```
+  
+  There is equal proportion for male and female for TM195 and TM498 but male are more attracted to the TM798 model than females.
+  
 • Does Martial status have any effect model customer buy?
+
+-> Forming hypothesis:
+  
+  Null Hypothesis: Martial status has no effect on model
+  
+  Alternate Hypothesis: Martial status has effect on the model customer choose.
+  
+  Performing Test:
+  
+```{r, echo=FALSE}
+table_marital_model = table(data$MaritalStatus, data$Product)
+chi_square_marital_model = chisq.test(table_marital_model)
+chi_square_martial_df = data.frame(Statistic = chi_square_marital_model$statistic, DF = chi_square_marital_model$parameter, P_value = chi_square_marital_model$p.value)
+kable(chi_square_martial_df, caption = "Chi-Square Test: Martial Status vs Treadmill Model")
+```
+  
+  As, p-value (0.9604746) > 0.05, we fail to reject the null hypothesis, and conclude that there is not enough evidence to suggest that the martial status has effect on the model customer choose.
+  
+  Visualizing:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, fill = MaritalStatus)) +
+  geom_bar(position = "fill") +
+  labs(title = "Distribution of Marital Status by Treadmill Model",
+       x = "Treadmill Model",
+       y = "Proportion",
+       fill = "Marital Status") +
+  scale_y_continuous(labels = scales::percent) 
+```
+ 
+  As per the figure, equal proportion of martial status is found in all the models.
+  
 • Are different age groups buying different models?
+
+-> Visualizing:
+
+```{r, echo=FALSE}
+library(scales)
+data$AgeGroup <- cut(data$Age, breaks = c(18, 30, 40, 50, 60), 
+                     labels = c("18-30", "30-40", "40-50", "50-60"), right = FALSE)
+ggplot(data, aes(x = Product, fill = AgeGroup)) +
+  geom_bar(position = "fill") +
+  labs(title = "Age Group Distribution by Treadmill Model", x = "Treadmill Model",
+       y = "Proportion",
+       fill = "Age Group") +
+  scale_y_continuous(labels = percent_format())
+```
+  
+  As per the figure above, people of age 18-30 are the majority buyers of all the models. While people of age 30-40 are slightly more inclined to buy model TM498.
+  
 • Relation between Age, Income and education and model bought?
 
+->Visualizing:
 
+```{r, echo=FALSE}
+ggplot(data, aes(x = Age, y = Income, color = Product)) +
+  geom_point() +
+  labs(title = "Income vs Age by Treadmill Model", x = "Age", y = "Income") +
+  scale_y_continuous(labels = label_comma())
+```
+
+  From the above figure, it can be seen that people with higher income and in their middle ages tend to choose TM799 while the other two models have broader distribution over the income and ages.
+  
+  It can also be noticed that people of ages below 30 tend to buy TM798 model even with slightly below mean income. 

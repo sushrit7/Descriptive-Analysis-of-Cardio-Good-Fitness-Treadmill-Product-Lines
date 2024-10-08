@@ -69,10 +69,115 @@ ggplot(data, aes(x = MaritalStatus)) +
   labs(title = "Treadmill Purchases by Marital Status", x = "Maritial Status", y = "Number of Customers") 
 ```
 • Is there any relation between Income and model?
+```{r}
+anova_result = aov(Income ~ Product, data = data)
+anova_summary = summary(anova_result)
+anova_df = as.data.frame(anova_summary[[1]])
+kable(anova_df, format = "markdown", caption = "ANOVA Table: Income ~ Product")
+```
+
+
+
+```{r}
+ggplot(data, aes(x = Product, y = Income)) +
+  geom_boxplot() +
+  labs(title = "Income Distribution by Treadmill Model", x = "Treadmill Model", y = "Income") 
+```
 • Is there any relation between Age and model?
+
+```{r}
+anova_age_model <- aov(Age ~ Product, data = data)
+anova_result <- summary(anova_age_model)
+kable(anova_result[[1]], caption = "ANOVA Table: Age vs Product")
+```
+
+```{r}
+ggplot(data, aes(x = Product, y = Age)) +
+  geom_boxplot() +
+  labs(title = "Age Distribution by Treadmill Model", x = "Treadmill Model", y = "Age") 
+```
+
 • Is there any relation between self-rated fitness and model?
+
+```{r}
+table_fitness_model = table(data$Fitness, data$Product)
+chisq_test = chisq.test(table_fitness_model)
+chi_result_df = data.frame(Statistic = chisq_test$statistic, DF = chisq_test$parameter, P_value = chisq_test$p.value)
+kable(chi_result_df, caption = "Chi-Square Test Results: Fitness vs Product")
+```
+
+```{r}
+ggplot(data, aes(x = Product, fill = factor(Fitness))) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribution of Fitness by Product", x = "Treadmill Model",y = "Count", fill = "Fitness Level")
+```
 • Is there any relation between education and model?
+
+```{r}
+anova_edu_model = aov(Education ~ Product, data = data)
+summary(anova_edu_model)
+```
+```{r, echo=True}
+ggplot(data, aes(x = Product, y = Education)) +
+  geom_boxplot() +
+  labs(title = "Education Distribution by Treadmill Model", x = "Treadmill Model", y = "Education") 
+```
+
 • Does gender have any effect on model customer buy?
+
+```{r, echo=TRUE}
+table_gender_model = table(data$Gender, data$Product)
+chi_square_gender_model = chisq.test(table_gender_model)
+chi_square_gender_df = data.frame(Statistic = chi_square_gender_model$statistic, DF = chi_square_gender_model$parameter, P_value = chi_square_gender_model$p.value)
+kable(chi_square_gender_df, caption = "Chi-Square Test: Gender vs Treadmill Model")
+```
+
+```{r}
+ggplot(data, aes(x = Product, fill = Gender)) +
+  geom_bar(position = "fill") +
+  labs(title = "Distribution of Gender by Treadmill Model", y = "Proportion", x = "Treadmill Model") 
+```
 • Does Martial status have any effect model customer buy?
+
+```{r}
+table_marital_model = table(data$MaritalStatus, data$Product)
+chi_square_marital_model = chisq.test(table_marital_model)
+chi_square_martial_df = data.frame(Statistic = chi_square_marital_model$statistic, DF = chi_square_marital_model$parameter, P_value = chi_square_marital_model$p.value)
+kable(chi_square_martial_df, caption = "Chi-Square Test: Martial Status vs Treadmill Model")
+```
+
+```{r}
+ggplot(data, aes(x = Product, fill = MaritalStatus)) +
+  geom_bar(position = "fill") +
+  labs(title = "Distribution of Marital Status by Treadmill Model",
+       x = "Treadmill Model",
+       y = "Proportion",
+       fill = "Marital Status") +
+  scale_y_continuous(labels = scales::percent) 
+```
+
 • Are different age groups buying different models?
+```{r}
+min(data$Age, na.rm = TRUE)
+max(data$Age, na.rm = TRUE)
+```
+
+```{r}
+library(scales)
+data$AgeGroup <- cut(data$Age, breaks = c(18, 30, 40, 50, 60), 
+                     labels = c("18-30", "30-40", "40-50", "50-60"), right = FALSE)
+ggplot(data, aes(x = Product, fill = AgeGroup)) +
+  geom_bar(position = "fill") +
+  labs(title = "Age Group Distribution by Treadmill Model", x = "Treadmill Model",
+       y = "Proportion",
+       fill = "Age Group") +
+  scale_y_continuous(labels = percent_format())
+```
 • Relation between Age, Income and education and model bought?
+
+```{r}
+ggplot(data, aes(x = Age, y = Income, color = Product)) +
+  geom_point() +
+  labs(title = "Income vs Age by Treadmill Model", x = "Age", y = "Income") +
+  scale_y_continuous(labels = label_comma())
+```

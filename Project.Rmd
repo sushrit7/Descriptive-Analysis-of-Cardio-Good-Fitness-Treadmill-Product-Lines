@@ -10,81 +10,148 @@ Cardio Good Fitness, a leading retailer in the fitness equipment industry, aims 
 # Dataset Description
 The team identifies the following customer variables to study: 
 
-• Product - the model no. of the treadmill
+- **Product** - the model no. of the treadmill
 
-• Age - in no of years, of the customer
+- **Age** - in no of years, of the customer
 
-• Gender - of the customer
+- **Gender** - of the customer
 
-• Education - in no. of years, of the customer
+- **Education** - in no. of years, of the customer
 
-• Marital Status - of the customer
+- **Marital Status** - of the customer
 
-• Usage - Avg. # times the customer wants to use the treadmill every week
+- **Usage** - Avg. # times the customer wants to use the treadmill every week
 
-• Fitness - Self rated fitness score of the customer (5 - very fit, 1 - very unfit)
+- **Fitness** - Self-rated fitness score of the customer (5 - very fit, 1 - very unfit)
 
-• Income - of the customer
+- **Income** - of the customer
 
-• Miles- expected to run.
+- **Miles** - expected to run.
 
 The data are stored in the CardioGoodFitness.csv file. 
 
 # Methodology
 The following steps were undertaken to analyze the data and draw insights:
 
-Data Preprocessing: Identification of missing value, classification of variables into categorical and numerical for analysis.
+* **Data Preprocessing**: Identification of missing value, classification of variables into categorical and numerical for analysis.
 
-Data Summary: A preliminary analysis to understand the central tendencies and spread of numerical variables and frequency counts for categorical variables. 
+* **Data Summary**: A preliminary analysis to understand the central tendencies and spread of numerical variables and frequency counts for categorical variables. 
 
-Univariate, Bivariate, Multivariate Tests: Performed appropriate tests to see if gender affects the model purchased. Performed tests to see if there any difference in mean age among customers that purchased different models.
+* **Univariate, Bivariate, Multivariate Analysis and Tests**: Performed appropriate tests to see if gender affects the model purchased. Performed tests to see if there any difference in mean age among customers that purchased different models.
 
-Visualization: Visualizations were created to understand the data:
-Histograms and density plots were created to assess the distribution of numerical variables, bar charts and boxplots to compare categorical and numerical variables and multivariate plots to explore the combined effect of several customer attributes on treadmill purchases.
+* **Visualization**: Histograms and density plots were created to assess the distribution of numerical variables, bar charts and boxplots to compare categorical and numerical variables and multivariate plots to explore the combined effect of several customer attributes on treadmill purchases.
 
 # Results and Analysis
-In this section, the findings from Cardio Good Fitness dataset are discussed.
+In this section, the findings from Cardio Good Fitness dataset are discussed. We ask and answer important questions about the dataset to further understand the data.
 
 ## About The Dataset:
-The dataset has the shape of (180,9),i.e. 180 observations and 9 variables. 
+* The dataset has the shape of (180,9),i.e. 180 observations and 9 variables. 
 
-The types of variables include:
+* The types of variables include:
 
-Numerical Variable: Age(Discrete), Education(Discrete), Usage(Discrete), Fitness(Ordinal), Income(Continuous), Miles(Discrete).
+  - **Numerical Variable**: Age(Discrete), Education(Discrete), Usage(Discrete), Fitness(Ordinal), Income(Continuous), Miles(Discrete).
 
-Categorical Variable: Product, Gender, Marital Status.
+  - **Categorical Variable**: Product, Gender, Marital Status.
 
-There are no missing data in the table. 
+*  There are no missing data in the table. 
 
-## Exploring Key Questions for Data Understanding
-• How many models does store have?
-
-->The store has 3 models: "TM195" "TM498" and "TM798".
-
-• Which is most sold Model?
-```{r, echo=FALSE, message=FALSE}
+```{r,echo=FALSE,warning=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
 library(knitr)
 data = read.csv("CardioGoodFitness.csv")
-most_sold = data %>% count(Product)
-kable(most_sold, col.names = c("Product", "Sold"), caption = "Treadmill Model Sales")
+kable(head(data, 5), caption = "First 5 Rows of CardioGoodFitness Data")
 ```
+
+## Univariate Analysis
+### 1. Product
+
+```{r, warning=FALSE, echo=FALSE}
+
+ggplot(data, aes(x = Product)) + 
+  geom_bar(fill = "red", color = "black", width = 0.3) + 
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) + 
+  labs(title = "Distribution of Treadmill Models Purchased", 
+       x = "Treadmill Model", 
+       y = "Number of Customers") +
+  theme_minimal()
+
+```
+
+* How many models does store have?
+
+->The store has 3 models: "TM195" "TM498" and "TM798".
+
+* Which is most sold Model?
 
 -> TM195 is the most sold model.
 
-• Are Male customers buying treadmill more than female customers?
+### 2. Gender
 
 ```{r, echo=FALSE}
 ggplot(data, aes(x = Gender)) +
   geom_bar(fill = "Purple", width = 0.2) +
   labs(title = "Treadmill Purchases by Gender", x = "Gender", y = "Number of Customers") 
 ```
+
+* Are Male customers buying treadmill more than female customers?
+
 -> Yes, male customers are buying more treadmills.
 
-• What is the average Income, Age, Education of people buying treadmill?
+### 3. Age
+
+```{r, echo=FALSE}
+ggplot(data, aes(x = Age)) + 
+  geom_histogram(binwidth = 5, fill = "yellow", color = "black") + 
+  labs(title = "Distribution of Age", x = "Age", y = "Count") +
+  scale_x_continuous(breaks = seq(min(data$Age), max(data$Age), by = 5))
+```
+  
+```{r, echo=FALSE}
+age_summary <- summary(data$Age)
+age_summary_df <- data.frame(Statistic = names(age_summary), Value = as.numeric(age_summary))
+kable(age_summary_df, caption = "Age Summary")
+
+```
+  
+  The age range is (18-50). From the graph and table, we observe that people of age 23-28 are the most popular buyers. After age 28, the sales decrease with the decrease in age.
+
+### Education
+
+```{r, echo=FALSE}
+ggplot(data, aes(x = Education)) + 
+  geom_histogram(binwidth = 3, fill = "pink", color = "black") + 
+  labs(title = "Distribution of Education", x = "Education", y = "Count") +
+  scale_x_continuous(breaks = seq(min(data$Education), max(data$Education), by = 2))
+```
+
+```{r}
+education_summary <- summary(data$Education)
+education_summary_df <- data.frame(Statistic = names(education_summary), Value = as.numeric(education_summary))
+kable(education_summary_df, caption = "Education Summary")
+```
+
+### Martial Status
+
+```{r, echo=FALSE}
+ggplot(data, aes(x = MaritalStatus)) +
+  geom_bar(fill = "LightGreen", width = 0.3) +
+  labs(title = "Treadmill Purchases by Marital Status", x = "Maritial Status", y = "Number of Customers") 
+```
+
+• Are married customers buying Treadmill more than Single customers?
+
+-> Yes, married people are buying more Treadmills than Single customers.
+
+### Usage        
+### Fitness      
+### Income       
+### Miles
+
+* What is the average Income, Age, Education of people buying treadmill?
 
 -> The averages can be observed as below:
+
 ```{r, echo=FALSE}
 averages = data %>% summarize(Avg_Income = mean(Income), Avg_Age = mean(Age), Avg_Education = mean(Education))
 kable(averages, caption = "Averages of Treadmill Buyers")
@@ -93,6 +160,7 @@ kable(averages, caption = "Averages of Treadmill Buyers")
 • How many days and miles customer expect to run on treadmill?
 
 -> According to the data, 
+
 ```{r, echo = FALSE}
 avg_usage_miles = data %>% summarize(Avg_Usage = mean(Usage), Avg_Miles = mean(Miles))
 kable(avg_usage_miles, caption = "Average Days and Miles Expected on Treadmill")
@@ -109,13 +177,9 @@ self_rate = data %>% summarise(Avg_Rating = mean(Fitness))
 kable(self_rate, caption = "Average self-rated fitness of customers buying treadmill")
 ```
 
-• Are married customers buying Treadmill more than Single customers?
 
-```{r, echo=FALSE}
-ggplot(data, aes(x = MaritalStatus)) +
-  geom_bar(fill = "LightGreen", width = 0.3) +
-  labs(title = "Treadmill Purchases by Marital Status", x = "Maritial Status", y = "Number of Customers") 
-```
+
+
 
 • Is there any relation between Income and model?
 

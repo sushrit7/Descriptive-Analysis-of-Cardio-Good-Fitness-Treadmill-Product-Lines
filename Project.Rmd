@@ -69,20 +69,19 @@ kable(head(data, 5), caption = "First 5 Rows of CardioGoodFitness Data")
 ```{r, warning=FALSE, echo=FALSE}
 
 ggplot(data, aes(x = Product)) + 
-  geom_bar(fill = "red", color = "black", width = 0.3) + 
+  geom_bar(fill = "red", width = 0.3) + 
   geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) + 
-  labs(title = "Distribution of Treadmill Models Purchased", 
+  labs(title = "Treadmill Models Purchased", 
        x = "Treadmill Model", 
-       y = "Number of Customers") +
-  theme_minimal()
+       y = "Number of Customers")
 
 ```
 
-* How many models does store have?
+**How many models does store have?**
 
 ->The store has 3 models: "TM195" "TM498" and "TM798".
 
-* Which is most sold Model?
+**Which is most sold Model?** 
 
 -> TM195 is the most sold model.
 
@@ -94,7 +93,7 @@ ggplot(data, aes(x = Gender)) +
   labs(title = "Treadmill Purchases by Gender", x = "Gender", y = "Number of Customers") 
 ```
 
-* Are Male customers buying treadmill more than female customers?
+**Are Male customers buying treadmill more than female customers?**
 
 -> Yes, male customers are buying more treadmills.
 
@@ -107,31 +106,35 @@ ggplot(data, aes(x = Age)) +
   scale_x_continuous(breaks = seq(min(data$Age), max(data$Age), by = 5))
 ```
   
+  The graph is right skewed with majority between the range of 23-28.
+  
 ```{r, echo=FALSE}
 age_summary <- summary(data$Age)
 age_summary_df <- data.frame(Statistic = names(age_summary), Value = as.numeric(age_summary))
 kable(age_summary_df, caption = "Age Summary")
-
 ```
   
-  The age range is (18-50). From the graph and table, we observe that people of age 23-28 are the most popular buyers. After age 28, the sales decrease with the decrease in age.
+  The age range is (18-50). After age 28, the sales decrease with the increase in age.
 
-### Education
+### 4. Education
 
 ```{r, echo=FALSE}
 ggplot(data, aes(x = Education)) + 
-  geom_histogram(binwidth = 3, fill = "pink", color = "black") + 
+  geom_histogram(binwidth = 2, fill = "pink", color = "black") + 
   labs(title = "Distribution of Education", x = "Education", y = "Count") +
   scale_x_continuous(breaks = seq(min(data$Education), max(data$Education), by = 2))
 ```
+  
+  The graph shows that the education level peaks between 14-16 years.
 
-```{r}
+```{r, echo=FALSE}
 education_summary <- summary(data$Education)
 education_summary_df <- data.frame(Statistic = names(education_summary), Value = as.numeric(education_summary))
 kable(education_summary_df, caption = "Education Summary")
 ```
-
-### Martial Status
+  As per the data, majority of customers are high school graduate (12th). Few have advanced level education i.e more than 16 years which also shows right skewness of the graph.
+  
+### 5. Martial Status
 
 ```{r, echo=FALSE}
 ggplot(data, aes(x = MaritalStatus)) +
@@ -139,36 +142,46 @@ ggplot(data, aes(x = MaritalStatus)) +
   labs(title = "Treadmill Purchases by Marital Status", x = "Maritial Status", y = "Number of Customers") 
 ```
 
-• Are married customers buying Treadmill more than Single customers?
+**Are married customers buying Treadmill more than Single customers?**
 
 -> Yes, married people are buying more Treadmills than Single customers.
 
-### Usage        
-### Fitness      
-### Income       
-### Miles
-
-* What is the average Income, Age, Education of people buying treadmill?
-
--> The averages can be observed as below:
+### 6. Usage
 
 ```{r, echo=FALSE}
-averages = data %>% summarize(Avg_Income = mean(Income), Avg_Age = mean(Age), Avg_Education = mean(Education))
-kable(averages, caption = "Averages of Treadmill Buyers")
+ggplot(data, aes(x = as.factor(Usage))) + 
+  geom_bar(fill = "purple") + 
+  labs(title = "Usage", x = "Usage (Times per Week)", y = "Count")
+```
+  
+  Above graph is right skewed. People on average want to use the treadmill 3 times a week. Few will use it more than 4 times a week, hence making the graph right skewed.
+  
+  
+```{r, echo=FALSE}
+usage_summary = summary(data$Usage)
+usage_summary_df = data.frame(Statistic = names(usage_summary), Value = as.numeric(usage_summary))
+kable(usage_summary_df, caption = "Usage Summary")
+```
+  
+
+### 7. Fitness
+
+```{r, echo=FALSE}
+ggplot(data, aes(x = as.factor(Fitness))) + 
+  geom_bar(fill = "orange") + 
+  labs(title = "Distribution of Fitness Levels", x = "Fitness Level", y = "Count")
 ```
 
-• How many days and miles customer expect to run on treadmill?
+  The histogram shows that fitness level 3 is the most common, with close to 100 customers rating themselves at this level.
 
--> According to the data, 
 
-```{r, echo = FALSE}
-avg_usage_miles = data %>% summarize(Avg_Usage = mean(Usage), Avg_Miles = mean(Miles))
-kable(avg_usage_miles, caption = "Average Days and Miles Expected on Treadmill")
+```{r, echo=FALSE}
+fitness_summary <- summary(data$Fitness)
+fitness_summary_df <- data.frame(Statistic = names(fitness_summary), Value = as.numeric(fitness_summary))
+kable(fitness_summary_df, caption = "Fitness Summary")
 ```
 
-An average usage would be 3 times a week with 103.19 miles.
-
-• What is the average self-rated fitness of customers buying treadmill?
+**What is the average self-rated fitness of customers buying treadmill?**
 
 -> The average self-rate fitness is given as:
 
@@ -177,11 +190,112 @@ self_rate = data %>% summarise(Avg_Rating = mean(Fitness))
 kable(self_rate, caption = "Average self-rated fitness of customers buying treadmill")
 ```
 
+### 8. Income 
+
+```{r, echo=FALSE}
+ggplot(data, aes(x = Income)) + 
+  geom_histogram(binwidth = 10000, fill = "skyblue", color = "black") + 
+  labs(title = "Distribution of Income", x = "Income", y = "Count") +
+  scale_x_continuous(labels = scales::comma)  
+```
+  The graph is right skewed. The most common range of income is between 40000 and 60000. Very few customers have higher income which makes the graph right skewed.
+
+```{r, echo=FALSE}
+income_summary <- summary(data$Income)
+income_summary_df <- data.frame(Statistic = names(income_summary), Value = as.numeric(income_summary))
+kable(income_summary_df, caption = "Income Summary")
+```
+
+### 9. Miles
+
+```{r, echo=FALSE}
+ggplot(data, aes(x = Miles)) + 
+  geom_histogram(binwidth = 50, fill = "blue", color = "black") + 
+  labs(title = "Distribution of Miles", x = "Miles", y = "Count") +
+  scale_x_continuous(breaks = seq(0, max(data$Miles), by = 50))  # Customizing axis labels
+
+```
+
+It is a right skewed graph. An average customer expects to run around 100 miles on their treadmill.
+
+```{r, echo=FALSE}
+miles_summary <- summary(data$Miles)
+miles_summary_df <- data.frame(Statistic = names(miles_summary), Value = as.numeric(miles_summary))
+kable(miles_summary_df, caption = "Miles Summary")
+```
+
+
+**How many days and miles customer expect to run on treadmill?**
+
+-> According to the data, 
+
+```{r, echo = FALSE}
+avg_usage_miles = data %>% summarize(Avg_Usage = mean(Usage), Avg_Miles = mean(Miles))
+kable(avg_usage_miles, caption = "Average Days and Miles Expected on Treadmill")
+```
 
 
 
+**What is the average Income, Age, Education of people buying treadmill?**
 
-• Is there any relation between Income and model?
+-> The averages can be observed as below:
+
+```{r, echo=FALSE}
+averages = data %>% summarize(Avg_Income = mean(Income), Avg_Age = mean(Age), Avg_Education = mean(Education))
+kable(averages, caption = "Averages of Treadmill Buyers")
+```
+
+## Bivariate Analysis
+
+### 1. Age vs Model
+**Is there any relation between Age and model?**
+
+-> Forming hypothesis:
+
+  Null: No relation between Age and model
+  
+  Alternate: Relation between Age and model
+  
+  Performing ANOVA test:
+```{r, echo=FALSE}
+anova_age_model = aov(Age ~ Product, data = data)
+anova_result = summary(anova_age_model)
+kable(anova_result[[1]], caption = "ANOVA Table: Age vs Product")
+```
+  
+  As p-value > 0.05, we do not have enough evidence to reject the null hypothesis. So we conclude that there is no relation between age and model choice.
+  
+  We can visualize the relation with box plot below:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, y = Age)) +
+  geom_boxplot() +
+  labs(title = "Age Distribution by Treadmill Model", x = "Treadmill Model", y = "Age") 
+```
+  
+  It can be observed that the medians for the different treadmill models are similar. TM195 and TM498 have similar distribution but TM798 have smaller distribution with a few outliers. 
+
+**Are different age groups buying different models?**
+
+-> Visualizing:
+
+```{r, echo=FALSE}
+library(scales)
+data$AgeGroup <- cut(data$Age, breaks = c(18, 30, 40, 50, 60), 
+                     labels = c("18-30", "30-40", "40-50", "50-60"), right = FALSE)
+ggplot(data, aes(x = Product, fill = AgeGroup)) +
+  geom_bar(position = "fill") +
+  labs(title = "Age Group Distribution by Treadmill Model", x = "Treadmill Model",
+       y = "Proportion",
+       fill = "Age Group") +
+  scale_y_continuous(labels = percent_format())
+```
+  
+  As per the figure above, people of age 18-30 are the majority buyers for all the models. While people of age 30-40 are slightly more inclined to buy model TM498.
+  
+### 2. Income vs Model
+
+**Is there any relation between Income and model?**
 
 -> Forming hypothesis:
   
@@ -198,48 +312,26 @@ anova_df = as.data.frame(anova_summary[[1]])
 kable(anova_df, format = "markdown", caption = "ANOVA Table: Income ~ Product")
 ```
   
-  As, F-value is very high and p-value < 0.05(typical significant value); we reject the null hypothesis. Hence, there is relation between income and model of treadmill.
+  As, F-value is very high and p-value < 0.05(typical significant value); we do not have enough evidence to accept the null hypothesis. Hence, there is relation between income and model of treadmill.
   
   We can observe the relation below:
   
 ```{r, echo=FALSE}
 ggplot(data, aes(x = Product, y = Income)) +
   geom_boxplot() +
-  labs(title = "Income Distribution by Treadmill Model", x = "Treadmill Model", y = "Income") 
+  labs(title = "Income Distribution by Treadmill Model", x = "Treadmill Model", y = "Income") + 
+  scale_y_continuous(labels = scales::comma_format())
 ```
   TM798 is more popular among higher income while TM195 and TM498 are popular among low income.
   
-• Is there any relation between Age and model?
+### 3. Fitness vs Model
 
--> Forming hypothesis:
-
-  Null: No relation between Age and model
-  
-  Alternate: Relation between Age and model
-  
-  Performing ANOVA test:
-```{r, echo=FALSE}
-anova_age_model <- aov(Age ~ Product, data = data)
-anova_result <- summary(anova_age_model)
-kable(anova_result[[1]], caption = "ANOVA Table: Age vs Product")
-```
-  
-  As p-value > 0.05, we do not have enough evidence to reject the null hypothesis.
-  
-  We can the relation with box plot below:
-  
-```{r, echo=FALSE}
-ggplot(data, aes(x = Product, y = Age)) +
-  geom_boxplot() +
-  labs(title = "Age Distribution by Treadmill Model", x = "Treadmill Model", y = "Age") 
-```
-  
-  It can be observed that the medians for the different treadmill models are similar.
-
-• Is there any relation between self-rated fitness and model?
+**Is there any relation between self-rated fitness and model?**
 
 -> Forming hypothesis;
+
   Null: No relation between self-rated fitness and model.
+  
   Alternate: There is relation between self-rated fitness and model
   
   Performing Chi-Square Test for categorical variable:
@@ -250,7 +342,8 @@ chisq_test = chisq.test(table_fitness_model)
 chi_result_df = data.frame(Statistic = chisq_test$statistic, DF = chisq_test$parameter, P_value = chisq_test$p.value)
 kable(chi_result_df, caption = "Chi-Square Test Results: Fitness vs Product")
 ```
-  For p-value close to 0, reject null hypothesis at 0.05 level. We have sufficient evidence to conclude self-rated fitness and model have a relation.
+ 
+  For p-value close to 0, we do not have enough evidence to accept null hypothesis at 0.05 level, so we conclude self-rated fitness and model have a relation.
   
   Observing with plot:
   
@@ -260,9 +353,10 @@ ggplot(data, aes(x = Product, fill = factor(Fitness))) +
   labs(title = "Distribution of Fitness by Product", x = "Treadmill Model",y = "Count", fill = "Fitness Level")
 ```
   For the model TM195 and TM498, people with fitness level 3 are more attracted. 
-  However, the model TM798 is bought by more fitness enthusiasts with fitness level 5.
+  However, the model TM798 is bought by more fitness enthusiasts with fitness greater than 3.
   
-• Is there any relation between education and model?
+### 4. Education vs Model
+**Is there any relation between education and model?**
 
 -> Forming Hypothesis:
 
@@ -289,8 +383,10 @@ ggplot(data, aes(x = Product, y = Education)) +
 ```
   
   It can be observed that people with more years of eduaction choose TM798 model.
-  
-• Does gender have any effect on model customer buy?
+
+### 5. Gender vs Model
+
+**Does gender have any effect on model customer buy?**
 
 ->Forming Hypothesis:
   
@@ -319,7 +415,9 @@ ggplot(data, aes(x = Product, fill = Gender)) +
   
   There is equal proportion for male and female for TM195 and TM498 but male are more attracted to the TM798 model than females.
   
-• Does Martial status have any effect model customer buy?
+### 6. Gender vs Model
+
+**Does Martial status have any effect model customer buy?**
 
 -> Forming hypothesis:
   
@@ -352,25 +450,62 @@ ggplot(data, aes(x = Product, fill = MaritalStatus)) +
  
   As per the figure, equal proportion of martial status is found in all the models.
   
-• Are different age groups buying different models?
+### 7. Usage vs Model
 
--> Visualizing:
+**Is there relation between usage and choice of model?**
 
+-> Forming hypothesis:
+  Null: There is no relation between usage and choice of model.
+  Alternate: There is relation between usage and the choice of model.
+  
+  Performing Test:
 ```{r, echo=FALSE}
-library(scales)
-data$AgeGroup <- cut(data$Age, breaks = c(18, 30, 40, 50, 60), 
-                     labels = c("18-30", "30-40", "40-50", "50-60"), right = FALSE)
-ggplot(data, aes(x = Product, fill = AgeGroup)) +
-  geom_bar(position = "fill") +
-  labs(title = "Age Group Distribution by Treadmill Model", x = "Treadmill Model",
-       y = "Proportion",
-       fill = "Age Group") +
-  scale_y_continuous(labels = percent_format())
+anova_usage_product = aov(Usage ~ Product, data = data)
+result_usage = summary(anova_usage_product)
+kable(result_usage[[1]], caption = "ANOVA Table: Usage vs Product")
 ```
   
-  As per the figure above, people of age 18-30 are the majority buyers of all the models. While people of age 30-40 are slightly more inclined to buy model TM498.
+  As, p-value is closer to 0 < 0.05, we do not have enough evidence to reject the null hypothesis, thus we accept the alternate hypothesis. So, accepting the alternate hypothesis, we can say that, there is relation between usage and the choice of model
   
-• Relation between Age, Income and education and model bought?
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, y = Usage)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Usage across Treadmill Models", x = "Treadmill Model", y = "Usage")
+```
+ It can be observed from the box plot that the model TM498 and TM195 have similar average usage but the usage of model TM195 is more varying. The model TM798 however has higher average usage compared to other two models.
+
+
+### 8. Miles vs Product
+
+**Is there a relation between model and miles?**
+
+-> Null Hypothesis: There is no relation between model and miles
+   
+   Alternate Hypothesis: There is a relation between model and miles ran.
+   
+   Performing test:
+   
+```{r, echo=FALSE}
+anova_miles_product = aov(Miles ~ Product, data = data)
+result_miles = summary(anova_miles_product)
+kable(result_miles[[1]], caption = "Miles vs Product")
+```
+
+  As p-value is close to 0, we do not have enough evidence to support the null hypothesis. Thus, we accept the alternate hypothesis that models and the miles run have a realtion.
+  
+  Visualizing:
+  
+```{r, echo=FALSE}
+ggplot(data, aes(x = Product, y = Miles)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Miles across Treadmill Models", x = "Treadmill Model", y = "Miles")
+```
+  It can be observed that people who run longer miles on average choose TM798 model. The remaining two have similar but lower average miles covered with varying distribution.
+
+
+## Multivariate Analysis
+
+**Relation between Age, Income and education and model bought?**
 
 ->Visualizing:
 
@@ -381,6 +516,85 @@ ggplot(data, aes(x = Age, y = Income, color = Product)) +
   scale_y_continuous(labels = label_comma())
 ```
 
-  From the above figure, it can be seen that people with higher income and in their middle ages tend to choose TM799 while the other two models have broader distribution over the income and ages.
+  From the above figure, it can be seen that people with higher income and in their middle ages tend to choose TM798 while the other two models have broader distribution over the income and ages.
   
   It can also be noticed that people of ages below 30 tend to buy TM798 model even with slightly below mean income. 
+  
+• **For Product Recommendation based on Income**
+
+Performing multiple regression:
+
+```{r, echo=FALSE}
+multi_reg_model <- lm(Income ~ Age + Fitness + Education + Product, data = data)
+summary(multi_reg_model)
+```
+
+
+
+For Recommendation based on Income for various models:
+
+Choosing model TM195 as baseline,it can be observed that customers who buy the TM498 model tend to have an income $2,063 higher but this is not statistically significant as p-values is 0.14395. However, for model TM798 the income is 25102.74 higher than the baseline and it is highly significant as p is very small. Thus, income matters for product TM798.
+
+
+**How does Model affect the interation between Age and Fitness?**
+
+
+```{r, echo=FALSE}
+two_way_anova <- aov( Age * Fitness ~  Product, data = data)
+summary(two_way_anova)
+
+```
+
+As p-value < 0.05, we can conclude that choice of model is affected by the interaction between Age and Fitness eventhough from above test we figured that there is no relation between Model and Age.
+
+
+# Summary
+## Univariate Analysis Results:
+- The store has 3 models: "TM195" "TM498" and "TM798".
+-	TM195 is the most sold model.
+-	Male customers buy more treadmills compared to Female.
+-	People of age 23-28 are the most popular age group buying treadmill	.
+-	Customers of education 14-16 years are of highest frequency.
+-	Married people are buying more Treadmills than Single customers.
+-	People on average want to use the treadmill 3 times a week.
+-	Fitness level 3 is the most common, with close to 100 customers rating themselves at this level.
+-	Average customer has income of 53719.58.
+-	An average customer expects to run around 100 miles on their treadmill.
+
+## Bivariate Analysis Results:
+-	There is no relation between Age and Model chosen. Age distribution is less varying for TM798 model compared to TM195 and TM498 models and has few outliers. People of age 30-40 prefer TM498 model more than other ones. Age 18-30 are the majority buyers for all the models.
+-	TM798 is more popular among higher income (Average 80000) while TM195 and TM498 are popular among low income (Average 45000).
+-	Customers who rate their fitness at average of 3 choose TM195 or TM498. People who rate their fitness above average (mostly 5 (maximum)) fitness choose the TM798 model.
+-	Customers with more years of education choose model TM798 (Average 18 years) while average of 16 choose the other models.
+-	Proportion of male is significant for TM798 model. Others have equal proportions.
+-	Partnered and Single are in equal proportion for all the models.
+-	Customer with higher expectation of usage i.e., around 5 choose the model TM798 model. For average usage around 3 days choose TM498 and for varying usage of 3-4 days they prefer TM195.
+-	For miles lesser than 100 miles, customer prefer TM195 and for more varying miles around 100, they choose TM498. For miles around 150 customers prefer TM798.
+
+## Multivariate Analysis
+-	Customer with higher income and in their middle age tend to choose TM798.
+-	Customers of ages below 30 also tend to buy TM798 model even with slightly below mean income.
+-	Customers who buy the TM498 model tend to have an income $2,063 higher than TM195, but this is not statistically significant. For model TM798 the income is 25102.74 higher than TM195 and it is highly significant.
+-	The interaction between Age and Fitness significantly affects the choice of treadmill. Even though the individual effect of Age may not be significant, its interaction with Fitness plays a vital role in determining model preference.
+
+## Customer Profile Summary based on model
+
+- **TM195**: Younger, cost-conscious customers with average fitness levels and moderate usage expectations.
+- **TM498**: Middle-aged customers seeking value for money and moderate performance, interested in maintaining regular fitness routines.
+- **TM798**: High-income, highly educated, and fitness-committed customers looking for advanced features and performance, willing to invest in their fitness.
+
+# Conclusion
+
+There is distinction between customer profiles between the three models which suggests that each model tends to different customer needs. Income is a major factor in choosing the models. Higher income customers are more likely to buy TM798 which is also corelated with higher education and fitness rating. Otherwise customers choose the more simple treadmills. Customers for TM798 also demostrate higher committment towards fitness with higher usage and miles expectation. TM195 buyers focus more on affordability and medium usage, TM498 buyers want balance between cost and performance while TM798 buyers prioritize advanced features over price.
+
+# Recommendation
+- Target high-income and more fitness conscious customers for TM798 model.
+- Promote TM498 for customers who want a balance between perfomance and affordability and to a middle aged demographich of 30-40 years.
+- Promote TM195 to a more younger audience given they probably have lower level of income and mention it's interest over the audince who care for affordibility.
+- Married male customers must be focused as they invest on more high end TM798 model. Also there can be efforts to attract more female demogrpachic for TM798 model.
+- TM798 model should be advertised as for serious performance for fitness consious runner, TM498 for reliability and affordibity and TM195 for starters.
+- As TM195 is the most sold product, sales of TM498 can also be increased with more adverisement as it appeals to similar profiles of customers.
+
+
+
+

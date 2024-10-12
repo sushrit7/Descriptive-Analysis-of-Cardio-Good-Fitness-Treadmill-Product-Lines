@@ -1,168 +1,196 @@
 ---
-title: "Code"
-author: "Sushrit Kafle, 800792522, sukafle@siue.edu"
-date: "2024-10-06"
+title: "Appendix- R-CODE"
 output: pdf_document
 ---
 
-```{r}
+
+```{r,echo=TRUE,warning=FALSE, message=FALSE}
 library(ggplot2)
 library(dplyr)
+library(knitr)
 data = read.csv("CardioGoodFitness.csv")
-glimpse(data)
-```
-```{r}
-colnames(data)
+kable(head(data, 5), caption = "First 5 Rows of CardioGoodFitness Data")
 ```
 
-```{r}
-missing_data = colSums(is.na(data))
-print(missing_data)
+## Univariate Analysis
+### 1. Product
+
+```{r, warning=FALSE, echo=TRUE}
+
+ggplot(data, aes(x = Product)) + 
+  geom_bar(fill = "red", width = 0.3) + 
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) + 
+  labs(title = "Treadmill Models Purchased", 
+       x = "Treadmill Model", 
+       y = "Number of Customers")
+
 ```
-```{r}
-summary(data)
-```
-• How many models does store have?
-```{r}
-models = unique(data$Product)
-print(models)
-length(models)
-```
-• Which is most sold Model?
-```{r}
-library(knitr)
-most_sold = data %>% count(Product)
-kable(most_sold, col.names = c("Product", "Sold"), caption = "Treadmill Model Sales")
-```
-• Are Male customers buying treadmill more than female customers?
+
+### 2. Gender
+
 ```{r, echo=TRUE}
 ggplot(data, aes(x = Gender)) +
-  geom_bar(fill = "Purple") +
+  geom_bar(fill = "Purple", width = 0.2) +
   labs(title = "Treadmill Purchases by Gender", x = "Gender", y = "Number of Customers") 
 ```
-• What is the average Income, Age, Education of people buying treadmill?
 
-```{r}
-averages = data %>% summarize(Avg_Income = mean(Income), Avg_Age = mean(Age), Avg_Education = mean(Education))
-kable(averages, caption = "Averages of Treadmill Buyers")
+
+### 3. Age
+
+```{r, echo=TRUE}
+ggplot(data, aes(x = Age)) + 
+  geom_histogram(binwidth = 5, fill = "yellow", color = "black") + 
+  labs(title = "Distribution of Age", x = "Age", y = "Count") +
+  scale_x_continuous(breaks = seq(min(data$Age), max(data$Age), by = 5))
 ```
+  
 
-• How many days and miles customer expect to run on treadmill?
-
-```{r}
-avg_usage_miles = data %>% summarize(Avg_Usage = mean(Usage), Avg_Miles = mean(Miles))
-kable(avg_usage_miles, caption = "Average Days and Miles Expected on Treadmill")
+```{r, echo=TRUE}
+age_summary <- summary(data$Age)
+age_summary_df <- data.frame(Statistic = names(age_summary), Value = as.numeric(age_summary))
+kable(age_summary_df, caption = "Age Summary")
 ```
+  
 
-• What is the average self-rated fitness of customers buying treadmill?
+### 4. Education
 
-```{r}
-self_rate = data %>% summarise(Avg_Rating = mean(Fitness))
-kable (self_rate, caption = "Average self-rated fitness of customers buying treadmill")
+```{r, echo=TRUE}
+ggplot(data, aes(x = Education)) + 
+  geom_histogram(binwidth = 2, fill = "pink", color = "black") + 
+  labs(title = "Distribution of Education", x = "Education", y = "Count") +
+  scale_x_continuous(breaks = seq(min(data$Education), max(data$Education), by = 2))
 ```
-• Are married customers buying Treadmill more than Single customers?
+  
 
 
-```{r}
+```{r, echo=TRUE}
+education_summary <- summary(data$Education)
+education_summary_df <- data.frame(Statistic = names(education_summary), Value = as.numeric(education_summary))
+kable(education_summary_df, caption = "Education Summary")
+```
+ 
+### 5. Martial Status
+
+```{r, echo=TRUE}
 ggplot(data, aes(x = MaritalStatus)) +
   geom_bar(fill = "LightGreen", width = 0.3) +
   labs(title = "Treadmill Purchases by Marital Status", x = "Maritial Status", y = "Number of Customers") 
 ```
-• Is there any relation between Income and model?
-```{r}
-anova_result = aov(Income ~ Product, data = data)
-anova_summary = summary(anova_result)
-anova_df = as.data.frame(anova_summary[[1]])
-kable(anova_df, format = "markdown", caption = "ANOVA Table: Income ~ Product")
+
+
+### 6. Usage
+
+```{r, echo=TRUE}
+ggplot(data, aes(x = as.factor(Usage))) + 
+  geom_bar(fill = "purple") + 
+  labs(title = "Usage", x = "Usage (Times per Week)", y = "Count")
+```
+  
+
+  
+  
+```{r, echo=TRUE}
+usage_summary = summary(data$Usage)
+usage_summary_df = data.frame(Statistic = names(usage_summary), Value = as.numeric(usage_summary))
+kable(usage_summary_df, caption = "Usage Summary")
+```
+  
+
+### 7. Fitness
+
+```{r, echo=TRUE}
+ggplot(data, aes(x = as.factor(Fitness))) + 
+  geom_bar(fill = "orange") + 
+  labs(title = "Distribution of Fitness Levels", x = "Fitness Level", y = "Count")
 ```
 
 
 
-```{r}
-ggplot(data, aes(x = Product, y = Income)) +
-  geom_boxplot() +
-  labs(title = "Income Distribution by Treadmill Model", x = "Treadmill Model", y = "Income") 
+```{r, echo=TRUE}
+fitness_summary <- summary(data$Fitness)
+fitness_summary_df <- data.frame(Statistic = names(fitness_summary), Value = as.numeric(fitness_summary))
+kable(fitness_summary_df, caption = "Fitness Summary")
 ```
-• Is there any relation between Age and model?
 
-```{r}
-anova_age_model <- aov(Age ~ Product, data = data)
-anova_result <- summary(anova_age_model)
+:
+
+```{r, echo=TRUE}
+self_rate = data %>% summarise(Avg_Rating = mean(Fitness))
+kable(self_rate, caption = "Average self-rated fitness of customers buying treadmill")
+```
+
+### 8. Income 
+
+```{r, echo=TRUE}
+ggplot(data, aes(x = Income)) + 
+  geom_histogram(binwidth = 10000, fill = "skyblue", color = "black") + 
+  labs(title = "Distribution of Income", x = "Income", y = "Count") +
+  scale_x_continuous(labels = scales::comma)  
+```
+  
+  
+
+```{r, echo=TRUE}
+income_summary <- summary(data$Income)
+income_summary_df <- data.frame(Statistic = names(income_summary), Value = as.numeric(income_summary))
+kable(income_summary_df, caption = "Income Summary")
+```
+
+### 9. Miles
+
+```{r, echo=TRUE}
+ggplot(data, aes(x = Miles)) + 
+  geom_histogram(binwidth = 50, fill = "blue", color = "black") + 
+  labs(title = "Distribution of Miles", x = "Miles", y = "Count") +
+  scale_x_continuous(breaks = seq(0, max(data$Miles), by = 50))  # Customizing axis labels
+
+```
+
+
+```{r, echo=TRUE}
+miles_summary <- summary(data$Miles)
+miles_summary_df <- data.frame(Statistic = names(miles_summary), Value = as.numeric(miles_summary))
+kable(miles_summary_df, caption = "Miles Summary")
+```
+
+
+
+
+```{r, echo = FALSE}
+avg_usage_miles = data %>% summarize(Avg_Usage = mean(Usage), Avg_Miles = mean(Miles))
+kable(avg_usage_miles, caption = "Average Days and Miles Expected on Treadmill")
+```
+
+
+
+
+
+```{r, echo=TRUE}
+averages = data %>% summarize(Avg_Income = mean(Income), Avg_Age = mean(Age), Avg_Education = mean(Education))
+kable(averages, caption = "Averages of Treadmill Buyers")
+```
+
+## Bivariate Analysis
+
+### 1. Age vs Model
+
+```{r, echo=TRUE}
+anova_age_model = aov(Age ~ Product, data = data)
+anova_result = summary(anova_age_model)
 kable(anova_result[[1]], caption = "ANOVA Table: Age vs Product")
 ```
-
-```{r}
+  
+ 
+  
+```{r, echo=TRUE}
 ggplot(data, aes(x = Product, y = Age)) +
   geom_boxplot() +
   labs(title = "Age Distribution by Treadmill Model", x = "Treadmill Model", y = "Age") 
 ```
-
-• Is there any relation between self-rated fitness and model?
-
-```{r}
-table_fitness_model = table(data$Fitness, data$Product)
-chisq_test = chisq.test(table_fitness_model)
-chi_result_df = data.frame(Statistic = chisq_test$statistic, DF = chisq_test$parameter, P_value = chisq_test$p.value)
-kable(chi_result_df, caption = "Chi-Square Test Results: Fitness vs Product")
-```
-
-```{r}
-ggplot(data, aes(x = Product, fill = factor(Fitness))) +
-  geom_bar(position = "dodge") +
-  labs(title = "Distribution of Fitness by Product", x = "Treadmill Model",y = "Count", fill = "Fitness Level")
-```
-• Is there any relation between education and model?
-
-```{r}
-anova_edu_model = aov(Education ~ Product, data = data)
-summary(anova_edu_model)
-```
-```{r, echo=True}
-ggplot(data, aes(x = Product, y = Education)) +
-  geom_boxplot() +
-  labs(title = "Education Distribution by Treadmill Model", x = "Treadmill Model", y = "Education") 
-```
-
-• Does gender have any effect on model customer buy?
+  
+  
 
 ```{r, echo=TRUE}
-table_gender_model = table(data$Gender, data$Product)
-chi_square_gender_model = chisq.test(table_gender_model)
-chi_square_gender_df = data.frame(Statistic = chi_square_gender_model$statistic, DF = chi_square_gender_model$parameter, P_value = chi_square_gender_model$p.value)
-kable(chi_square_gender_df, caption = "Chi-Square Test: Gender vs Treadmill Model")
-```
-
-```{r}
-ggplot(data, aes(x = Product, fill = Gender)) +
-  geom_bar(position = "fill") +
-  labs(title = "Distribution of Gender by Treadmill Model", y = "Proportion", x = "Treadmill Model") 
-```
-• Does Martial status have any effect model customer buy?
-
-```{r}
-table_marital_model = table(data$MaritalStatus, data$Product)
-chi_square_marital_model = chisq.test(table_marital_model)
-chi_square_martial_df = data.frame(Statistic = chi_square_marital_model$statistic, DF = chi_square_marital_model$parameter, P_value = chi_square_marital_model$p.value)
-kable(chi_square_martial_df, caption = "Chi-Square Test: Martial Status vs Treadmill Model")
-```
-
-```{r}
-ggplot(data, aes(x = Product, fill = MaritalStatus)) +
-  geom_bar(position = "fill") +
-  labs(title = "Distribution of Marital Status by Treadmill Model",
-       x = "Treadmill Model",
-       y = "Proportion",
-       fill = "Marital Status") +
-  scale_y_continuous(labels = scales::percent) 
-```
-
-• Are different age groups buying different models?
-```{r}
-min(data$Age, na.rm = TRUE)
-max(data$Age, na.rm = TRUE)
-```
-
-```{r}
 library(scales)
 data$AgeGroup <- cut(data$Age, breaks = c(18, 30, 40, 50, 60), 
                      labels = c("18-30", "30-40", "40-50", "50-60"), right = FALSE)
@@ -173,11 +201,167 @@ ggplot(data, aes(x = Product, fill = AgeGroup)) +
        fill = "Age Group") +
   scale_y_continuous(labels = percent_format())
 ```
-• Relation between Age, Income and education and model bought?
+  
+ 
+### 2. Income vs Model
 
-```{r}
+
+```{r, echo=TRUE}
+library(knitr)
+anova_result = aov(Income ~ Product, data = data)
+anova_summary = summary(anova_result)
+anova_df = as.data.frame(anova_summary[[1]])
+kable(anova_df, format = "markdown", caption = "ANOVA Table: Income ~ Product")
+```
+  
+  
+  
+```{r, echo=TRUE}
+ggplot(data, aes(x = Product, y = Income)) +
+  geom_boxplot() +
+  labs(title = "Income Distribution by Treadmill Model", x = "Treadmill Model", y = "Income") + 
+  scale_y_continuous(labels = scales::comma_format())
+```
+  
+### 3. Fitness vs Model
+
+
+```{r, echo=TRUE, warning=FALSE}
+table_fitness_model = table(data$Fitness, data$Product)
+chisq_test = chisq.test(table_fitness_model)
+chi_result_df = data.frame(Statistic = chisq_test$statistic, DF = chisq_test$parameter, P_value = chisq_test$p.value)
+kable(chi_result_df, caption = "Chi-Square Test Results: Fitness vs Product")
+```
+ 
+  
+  
+```{r, echo=TRUE}
+ggplot(data, aes(x = Product, fill = factor(Fitness))) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribution of Fitness by Product", x = "Treadmill Model",y = "Count", fill = "Fitness Level")
+```
+  
+### 4. Education vs Model
+
+```{r, echo=TRUE}
+anova_edu_model = aov(Education ~ Product, data = data)
+anova_result = summary(anova_edu_model)
+kable(anova_result[[1]], caption = "ANOVA Table: Education vs Product")
+```
+  
+  
+```{r, echo=TRUE}
+ggplot(data, aes(x = Product, y = Education)) +
+  geom_boxplot() +
+  labs(title = "Education Distribution by Treadmill Model", x = "Treadmill Model", y = "Education") 
+```
+  
+
+
+### 5. Gender vs Model
+
+  
+```{r, echo=TRUE}
+table_gender_model = table(data$Gender, data$Product)
+chi_square_gender_model = chisq.test(table_gender_model)
+chi_square_gender_df = data.frame(Statistic = chi_square_gender_model$statistic, DF = chi_square_gender_model$parameter, P_value = chi_square_gender_model$p.value)
+kable(chi_square_gender_df, caption = "Chi-Square Test: Gender vs Treadmill Model")
+```
+  
+ 
+  
+```{r, echo=TRUE}
+ggplot(data, aes(x = Product, fill = Gender)) +
+  geom_bar(position = "fill") +
+  labs(title = "Distribution of Gender by Treadmill Model", y = "Proportion", x = "Treadmill Model") 
+```
+  
+  
+### 6. Gender vs Model
+
+
+  
+```{r, echo=TRUE}
+table_marital_model = table(data$MaritalStatus, data$Product)
+chi_square_marital_model = chisq.test(table_marital_model)
+chi_square_martial_df = data.frame(Statistic = chi_square_marital_model$statistic, DF = chi_square_marital_model$parameter, P_value = chi_square_marital_model$p.value)
+kable(chi_square_martial_df, caption = "Chi-Square Test: Martial Status vs Treadmill Model")
+```
+  
+ 
+  
+```{r, echo=TRUE}
+ggplot(data, aes(x = Product, fill = MaritalStatus)) +
+  geom_bar(position = "fill") +
+  labs(title = "Distribution of Marital Status by Treadmill Model",
+       x = "Treadmill Model",
+       y = "Proportion",
+       fill = "Marital Status") +
+  scale_y_continuous(labels = scales::percent) 
+```
+ 
+  
+  
+### 7. Usage vs Model
+
+  
+```{r, echo=TRUE}
+anova_usage_product = aov(Usage ~ Product, data = data)
+result_usage = summary(anova_usage_product)
+kable(result_usage[[1]], caption = "ANOVA Table: Usage vs Product")
+```
+  
+ 
+  
+```{r, echo=TRUE}
+ggplot(data, aes(x = Product, y = Usage)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Usage across Treadmill Models", x = "Treadmill Model", y = "Usage")
+```
+ 
+
+### 8. Miles vs Product
+
+
+```{r, echo=TRUE}
+anova_miles_product = aov(Miles ~ Product, data = data)
+result_miles = summary(anova_miles_product)
+kable(result_miles[[1]], caption = "Miles vs Product")
+```
+
+  
+  
+```{r, echo=TRUE}
+ggplot(data, aes(x = Product, y = Miles)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Miles across Treadmill Models", x = "Treadmill Model", y = "Miles")
+```
+ 
+
+## Multivariate Analysis
+
+
+
+```{r, echo=TRUE}
 ggplot(data, aes(x = Age, y = Income, color = Product)) +
   geom_point() +
   labs(title = "Income vs Age by Treadmill Model", x = "Age", y = "Income") +
   scale_y_continuous(labels = label_comma())
+```
+
+
+
+```{r, echo=TRUE}
+multi_reg_model <- lm(Income ~ Age + Fitness + Education + Product, data = data)
+summary(multi_reg_model)
+```
+
+
+
+
+
+```{r, echo=TRUE}
+two_way_anova <- aov( Age * Fitness ~  Product, data = data)
+summary(two_way_anova)
+
 ```
